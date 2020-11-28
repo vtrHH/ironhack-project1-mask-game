@@ -1,8 +1,9 @@
 class Mask {
-  constructor(x, y, angle) {
+  constructor(x, y, distanceX, distanceY, angle) {
     this.x = x;
     this.y = y;
-    this.speed = 4;
+    this.speedX = distanceX;
+    this.speedY = distanceY;
     this.angle = angle;
     this.width = 20;
     this.height = 5;
@@ -10,7 +11,8 @@ class Mask {
 
   runLogic() {
     // completely lost here - needs to be fixed
-  this.x += 4;
+    this.x += this.speedX * 10;
+    this.y += this.speedY * 10;
   }
 
   draw() {

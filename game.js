@@ -2,8 +2,12 @@ class Game {
   constructor() {
     this.player = new Player(canvasWidth / 2, canvasHeight / 2 - 25, 50, 50);
     this.unmaskedPersons = [];
+    this.maskedPersons = [];
+    this.kids = [];
     this.masks = [];
     this.lastUnmaskedPersonTimestamp = 0;
+    this.lastMaskedPersonTimestamp = 0;
+    this.lastKidTimestamp = 0;
     this.score = 100;
     this.setKeyBindings();
     this.active = true;
@@ -12,8 +16,12 @@ class Game {
   reset() {
     this.player = new Player(canvasWidth / 2, canvasHeight / 2 - 25, 50, 50);
     this.unmaskedPersons = [];
+    this.maskedPersons = [];
+    this.kids = [];
     this.masks = [];
     this.lastUnmaskedPersonTimestamp = 0;
+    this.lastMaskedPersonTimestamp = 2;
+    this.lastKidTimestamp = 3;
     this.score = 100;
     this.setKeyBindings();
     this.active = true;
@@ -58,7 +66,13 @@ class Game {
       let length = Math.sqrt(directionX * directionX + directionY * directionY);
       directionX /= length;
       directionY /= length;
-      const mask = new Mask(this.player.x, this.player.y, this.player.angle);
+      const mask = new Mask(
+        this.player.x,
+        this.player.y,
+        directionX,
+        directionY,
+        this.player.angle
+      );
       this.masks.push(mask);
     });
   }
@@ -75,6 +89,36 @@ class Game {
         )
       );
       this.lastUnmaskedPersonTimestamp = currentTimeStamp;
+    }
+  }
+
+  addMaskedPersons() {
+    const currentTimeStamp = Date.now();
+    if (currentTimeStamp > this.lastMaskedPersonTimestamp + 4000) {
+      this.maskedPersons.push(
+        new MaskedPerson(
+          canvasWidth,
+          Math.random() * (canvasHeight - 50),
+          50,
+          50
+        )
+      );
+      this.lastMaskedPersonTimestamp = currentTimeStamp;
+    }
+  }
+
+  addKids() {
+    const currentTimeStamp = Date.now();
+    if (currentTimeStamp > this.lastKidTimestamp + 1000) {
+      this.kids.push(
+        new Kid(
+          Math.random() * canvasWidth,
+          Math.random() * canvasHeight,
+          20,
+          20
+        )
+      );
+      this.lastKidTimestamp = currentTimeStamp;
     }
   }
 
@@ -116,11 +160,41 @@ class Game {
         this.player.y + this.player.height >= unmaskedPerson.y &&
         this.player.y <= unmaskedPerson.y + unmaskedPerson.height
       ) {
-        const indexOfUnmaskedPersons = this.unmaskedPersons.indexOf(
+        const indexOfUnmaskedPerson = this.unmaskedPersons.indexOf(
           unmaskedPerson
         );
         this.score -= 20;
-        this.unmaskedPersons.splice(indexOfUnmaskedPersons, 1);
+        this.unmaskedPersons.splice(indexOfUnmaskedPerson, 1);
+      }
+    }
+  }
+
+  checkIntersectionOfPlayerAndMaskedPersons() {
+    for (let maskedPerson of this.maskedPersons) {
+      if (
+        this.player.x + this.player.width / 2 >= maskedPerson.x &&
+        this.player.x <= maskedPerson.x + maskedPerson.width &&
+        this.player.y + this.player.height >= maskedPerson.y &&
+        this.player.y <= maskedPerson.y + maskedPerson.height
+      ) {
+        const indexOfMaskedPerson = this.maskedPersons.indexOf(maskedPerson);
+        this.score -= 10;
+        this.maskedPersons.splice(indexOfMaskedPerson, 1);
+      }
+    }
+  }
+
+  checkIntersectionOfPlayerAndKids() {
+    for (let kid of this.kids) {
+      if (
+        this.player.x + this.player.width / 2 >= kid.x &&
+        this.player.x <= kid.x + kid.width &&
+        this.player.y + this.player.height >= kid.y &&
+        this.player.y <= kid.y + kid.height
+      ) {
+        const indexOfKid = this.kids.indexOf(kid);
+        this.score -= 10;
+        this.kids.splice(indexOfKid, 1);
       }
     }
   }
@@ -161,13 +235,23 @@ class Game {
     for (let unmaskedPerson of this.unmaskedPersons) {
       unmaskedPerson.runLogic();
     }
+    this.addMaskedPersons();
+    for (let maskedPerson of this.maskedPersons) {
+      maskedPerson.runLogic();
+    }
+    this.addKids();
+    for (let kid of this.kids) {
+      kid.runLogic();
+    }
     this.throwMask();
     for (let mask of this.masks) {
       mask.runLogic();
     }
     this.checkIntersectionOfMasksAndUnmaskedPersons();
     this.checkIntersectionOfPlayerAndUnmaskedPersons();
+    this.checkIntersectionOfPlayerAndMaskedPersons();
     this.unmaskedPersonLeavingPlayground();
+    this.checkIntersectionOfPlayerAndKids();
     if (this.score <= 0) {
       this.active = false;
     }
@@ -182,9 +266,14 @@ class Game {
   draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     this.player.draw();
-
+    for (let maskedPerson of this.maskedPersons) {
+      maskedPerson.draw();
+    }
     for (let unmaskedPerson of this.unmaskedPersons) {
       unmaskedPerson.draw();
+    }
+    for (let kid of this.kids) {
+      kid.draw();
     }
     for (let mask of this.masks) {
       mask.draw();
