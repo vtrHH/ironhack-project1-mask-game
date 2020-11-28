@@ -1,5 +1,4 @@
 body {
-    background-color: #90D0F9;
     margin: 0;
     height: 100vh;
     display: flex;
@@ -8,5 +7,6 @@ body {
   }
   
   canvas {
+    background-color: #90D0F9;
     border: 2px solid black;
   }

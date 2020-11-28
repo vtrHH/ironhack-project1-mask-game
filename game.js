@@ -6,8 +6,17 @@ class Game {
     this.lastUnmaskedPersonTimestamp = 0;
     this.score = 100;
     this.setKeyBindings();
-    this.addUnmaskedPersons();
-    this.throwMask();
+    this.active = true;
+  }
+
+  reset() {
+    this.player = new Player(canvasWidth / 2, canvasHeight / 2 - 25, 50, 50);
+    this.unmaskedPersons = [];
+    this.masks = [];
+    this.lastUnmaskedPersonTimestamp = 0;
+    this.score = 100;
+    this.setKeyBindings();
+    this.active = true;
   }
 
   setKeyBindings() {
@@ -25,10 +34,16 @@ class Game {
         case 'ArrowRight':
           this.player.x += 20;
           break;
-        case 'Space':
-          this.throwMask();
-          break;
       }
+      // x is working funny (I think due to rotation)
+      this.player.x = Math.max(
+        Math.min(this.player.x, canvasElement.width - this.player.width),
+        0
+      );
+      this.player.y = Math.max(
+        Math.min(this.player.y, canvasElement.height - this.player.height),
+        0
+      );
     });
   }
 
@@ -63,20 +78,31 @@ class Game {
     }
   }
 
+  // not working
   checkIntersectionOfMasksAndUnmaskedPersons() {
     for (let mask of this.masks) {
       for (let unmaskedPerson of this.unmaskedPersons) {
         if (
-          mask.x >= unmaskedPerson.x - mask.height &&
-          mask.y > unmaskedPerson.y &&
-          mask.y <= unmaskedPerson.y + unmaskedPerson.height
+          mask.x + mask.width === unmaskedPerson.x &&
+          mask.y + mask.hight >= unmaskedPerson.y &&
+          mask.y + mask.hight <= unmaskedPerson.y
         ) {
+          this.score += 10;
+
+          /* 
+          this.player.x + this.player.width / 2 >= unmaskedPerson.x &&
+         this.player.x <= unmaskedPerson.x + unmaskedPerson.width &&
+          this.player.y + this.player.height >= unmaskedPerson.y &&
+          this.player.y <= unmaskedPerson.y + unmaskedPerson.height */
+
+          /*  this.unmaskedPerson.context.fillStyle = '#0C690B';
+  
           const indexOfMask = this.masks.indexOf(mask);
-          const indexOfUnmaskedPersons = this.unmaskedPersons.indexOf(
+          const indexOfUnma  skedPersons = this.unmaskedPersons.indexOf(
             unmaskedPerson
           );
           this.masks.splice(indexOfMask, 1);
-          this.unmaskedPersons.splice(indexOfUnmaskedPersons, 1);
+          this.unmaskedPersons.splice(indexOfUnmaskedPersons, 1);*/
         }
       }
     }
@@ -85,11 +111,10 @@ class Game {
   checkIntersectionOfPlayerAndUnmaskedPersons() {
     for (let unmaskedPerson of this.unmaskedPersons) {
       if (
-        (this.player.x + this.player.width >= unmaskedPerson.x &&
-          this.player.x <= unmaskedPerson.x + unmaskedPerson.width &&
-          this.player.y + this.player.height >= unmaskedPerson.y &&
-          this.player.y <= unmaskedPerson.y + unmaskedPerson.height) ||
-        unmaskedPerson.x + unmaskedPerson.width < 0
+        this.player.x + this.player.width / 2 >= unmaskedPerson.x &&
+        this.player.x <= unmaskedPerson.x + unmaskedPerson.width &&
+        this.player.y + this.player.height >= unmaskedPerson.y &&
+        this.player.y <= unmaskedPerson.y + unmaskedPerson.height
       ) {
         const indexOfUnmaskedPersons = this.unmaskedPersons.indexOf(
           unmaskedPerson
@@ -100,24 +125,52 @@ class Game {
     }
   }
 
+  unmaskedPersonLeavingPlayground() {
+    for (let unmaskedPerson of this.unmaskedPersons) {
+      if (unmaskedPerson.x + unmaskedPerson.width === 0) {
+        this.active = false;
+      }
+    }
+  }
+
+  collectGarbage() {
+    for (let mask of this.masks) {
+      if (mask.x >= canvasWidth) {
+        const indexOfMask = this.masks.indexOf(mask);
+        this.masks.splice(indexOfMask, 1);
+      }
+    }
+  }
+
   loop() {
     this.runLogic();
     this.draw();
-    window.requestAnimationFrame(() => {
-      this.loop();
-    });
+    if (this.active) {
+      window.requestAnimationFrame(() => {
+        this.loop();
+      });
+    } else {
+      screenPlayElement.style.display = 'none';
+      screenGameOverElement.style.display = 'initial';
+    }
   }
 
   runLogic() {
+    this.collectGarbage();
     this.addUnmaskedPersons();
     for (let unmaskedPerson of this.unmaskedPersons) {
       unmaskedPerson.runLogic();
     }
+    this.throwMask();
     for (let mask of this.masks) {
       mask.runLogic();
     }
     this.checkIntersectionOfMasksAndUnmaskedPersons();
     this.checkIntersectionOfPlayerAndUnmaskedPersons();
+    this.unmaskedPersonLeavingPlayground();
+    if (this.score <= 0) {
+      this.active = false;
+    }
   }
 
   drawScore() {
@@ -129,12 +182,13 @@ class Game {
   draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     this.player.draw();
-    this.drawScore();
+
     for (let unmaskedPerson of this.unmaskedPersons) {
       unmaskedPerson.draw();
     }
     for (let mask of this.masks) {
       mask.draw();
     }
+    this.drawScore();
   }
 }

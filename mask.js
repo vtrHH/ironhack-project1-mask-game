@@ -9,7 +9,8 @@ class Mask {
   }
 
   runLogic() {
-    this.x += 4;
+    // completely lost here - needs to be fixed
+  this.x += 4;
   }
 
   draw() {
