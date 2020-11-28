@@ -6,6 +6,7 @@ class Game {
     this.lastUnmaskedPersonTimestamp = 0;
     this.setKeyBindings();
     this.addUnmaskedPersons();
+    this.throwMask();
   }
 
   setKeyBindings() {
@@ -23,18 +24,25 @@ class Game {
         case 'ArrowRight':
           this.player.x += 20;
           break;
-        case 'Space':
-          this.throwMask();
-          break;
       }
     });
   }
 
   throwMask() {
-      const playerX = this.player.x + this.player.width / 2;
-      const playerY = this.player.y + this.player.height / 2 - 2.5;
-      const mask = new Mask(playerX, playerY);
+    /*let playerX = this.player.x + this.player.width / 2;
+      let playerY = this.player.y + this.player.height / 2 - 2.5;*/
+
+    canvasElement.addEventListener('mousedown', (event) => {
+      let mouseX = event.offsetX;
+      let mouseY = event.offsetY;
+      let vectorX = mouseX - this.player.x;
+      let vectorY = mouseY - this.player.y;
+      let distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+      mouseX = mouseX / distance;
+      mouseY = mouseY / distance;
+      const mask = new Mask(this.player.x, this.player.y);
       this.masks.push(mask);
+    });
   }
 
   addUnmaskedPersons() {

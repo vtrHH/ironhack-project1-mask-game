@@ -7,7 +7,7 @@ class Mask {
   }
 
   runLogic() {
-    this.x += 4;
+    this.x += 2;
   }
 
   draw() {
@@ -17,20 +17,18 @@ class Mask {
 }
 
 
-/*   canvasElement.addEventListener('mousemove', (event) => {
-      const mouseX = event.offsetX;
-      const mouseY = event.offsetY;
-
-
-const speed = 5;
-      const vx = mouseX - playerX;
-      const vy = mouseY - playerY;
-      const distance = Math.sqrt (vx * vx + vy * vy);
-      let distanceX = vx / distance;
-      let distanceY = vy / distance;
-      distanceX *= speed;
-      distanceY *= speed;
-
-
-*/
-
+/* context.clearRect(0, 0, canvasWidth, canvasHeight);
+      context.fillStyle = 'black';
+      context.save();
+      context.translate(this.x, this.y + this.height / 2);
+      context.rotate(this.angle);
+      context.fillRect(
+        -0.5 * this.width,
+        -0.5 * this.height,
+        this.width,
+        this.height
+      );
+      context.restore();
+    }
+  }
+  */
