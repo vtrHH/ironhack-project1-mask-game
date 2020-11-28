@@ -24,6 +24,9 @@ class Game {
         case 'ArrowRight':
           this.player.x += 20;
           break;
+        case 'Space':
+          this.throwMask();
+          break;
       }
     });
   }
@@ -31,18 +34,19 @@ class Game {
   throwMask() {
     /*let playerX = this.player.x + this.player.width / 2;
       let playerY = this.player.y + this.player.height / 2 - 2.5;*/
-
-    canvasElement.addEventListener('mousedown', (event) => {
-      let mouseX = event.offsetX;
-      let mouseY = event.offsetY;
-      let vectorX = mouseX - this.player.x;
-      let vectorY = mouseY - this.player.y;
-      let distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-      mouseX = mouseX / distance;
-      mouseY = mouseY / distance;
-      const mask = new Mask(this.player.x, this.player.y);
-      this.masks.push(mask);
-    });
+      canvasElement.addEventListener('mousedown', (event) => {
+        let mouseX = event.offsetX;
+        let mouseY = event.offsetY;
+        let vectorX = mouseX - this.player.x;
+        let vectorY = mouseY - this.player.y;
+        let distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+        mouseX = mouseX / distance;
+        mouseY = mouseY / distance;
+        const mask = new Mask(this.player.x, this.player.y, this.player.angle);
+        this.masks.push(mask);
+      });
+    const mask = new Mask(this.player.x, this.player.y, this.player.angle);
+    this.masks.push(mask);
   }
 
   addUnmaskedPersons() {
@@ -79,8 +83,7 @@ class Game {
     }
   }
 
-  // not working yet !!!
-  /*checkIntersectionOfPlayerAndUnmaskedPersons() {
+  checkIntersectionOfPlayerAndUnmaskedPersons() {
     for (let unmaskedPerson of this.unmaskedPersons) {
       if (
         (this.player.x + this.player.width >= unmaskedPerson.x &&
@@ -95,7 +98,7 @@ class Game {
         this.unmaskedPersons.splice(indexOfUnmaskedPersons, 1);
       }
     }
-  }*/
+  }
 
   loop() {
     this.runLogic();
@@ -114,6 +117,7 @@ class Game {
       mask.runLogic();
     }
     this.checkIntersectionOfMasksAndUnmaskedPersons();
+    this.checkIntersectionOfPlayerAndUnmaskedPersons()
   }
 
   draw() {
