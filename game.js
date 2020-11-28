@@ -25,17 +25,16 @@ class Game {
           break;
         case 'Space':
           this.throwMask();
-          console.log(event);
           break;
       }
     });
   }
 
   throwMask() {
-    const x = this.player.x + this.player.width / 2;
-    const y = this.player.y + this.player.height / 2 - 2.5;
-    const mask = new Mask(x, y);
-    this.masks.push(mask);
+      const playerX = this.player.x + this.player.width / 2;
+      const playerY = this.player.y + this.player.height / 2 - 2.5;
+      const mask = new Mask(playerX, playerY);
+      this.masks.push(mask);
   }
 
   addUnmaskedPersons() {
@@ -106,7 +105,6 @@ class Game {
     for (let mask of this.masks) {
       mask.runLogic();
     }
-    this.checkIntersectionOfMasksAndUnmaskedPersons();
     this.checkIntersectionOfMasksAndUnmaskedPersons();
   }
 
