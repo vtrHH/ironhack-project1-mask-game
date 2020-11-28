@@ -4,6 +4,7 @@ class Game {
     this.unmaskedPersons = [];
     this.masks = [];
     this.lastUnmaskedPersonTimestamp = 0;
+    this.score = 100;
     this.setKeyBindings();
     this.addUnmaskedPersons();
     this.throwMask();
@@ -34,19 +35,17 @@ class Game {
   throwMask() {
     /*let playerX = this.player.x + this.player.width / 2;
       let playerY = this.player.y + this.player.height / 2 - 2.5;*/
-      canvasElement.addEventListener('mousedown', (event) => {
-        let mouseX = event.offsetX;
-        let mouseY = event.offsetY;
-        let vectorX = mouseX - this.player.x;
-        let vectorY = mouseY - this.player.y;
-        let distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-        mouseX = mouseX / distance;
-        mouseY = mouseY / distance;
-        const mask = new Mask(this.player.x, this.player.y, this.player.angle);
-        this.masks.push(mask);
-      });
-    const mask = new Mask(this.player.x, this.player.y, this.player.angle);
-    this.masks.push(mask);
+    canvasElement.addEventListener('mousedown', (event) => {
+      let mouseX = event.offsetX;
+      let mouseY = event.offsetY;
+      let directionX = mouseX - this.player.x;
+      let directionY = mouseY - this.player.y;
+      let length = Math.sqrt(directionX * directionX + directionY * directionY);
+      directionX /= length;
+      directionY /= length;
+      const mask = new Mask(this.player.x, this.player.y, this.player.angle);
+      this.masks.push(mask);
+    });
   }
 
   addUnmaskedPersons() {
@@ -95,6 +94,7 @@ class Game {
         const indexOfUnmaskedPersons = this.unmaskedPersons.indexOf(
           unmaskedPerson
         );
+        this.score -= 20;
         this.unmaskedPersons.splice(indexOfUnmaskedPersons, 1);
       }
     }
@@ -117,12 +117,19 @@ class Game {
       mask.runLogic();
     }
     this.checkIntersectionOfMasksAndUnmaskedPersons();
-    this.checkIntersectionOfPlayerAndUnmaskedPersons()
+    this.checkIntersectionOfPlayerAndUnmaskedPersons();
+  }
+
+  drawScore() {
+    context.fillStyle = 'grey';
+    context.font = '64px sans-serif';
+    context.fillText(this.score, 50, 100);
   }
 
   draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
     this.player.draw();
+    this.drawScore();
     for (let unmaskedPerson of this.unmaskedPersons) {
       unmaskedPerson.draw();
     }

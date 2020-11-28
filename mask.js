@@ -2,13 +2,13 @@ class Mask {
   constructor(x, y, angle) {
     this.x = x;
     this.y = y;
+    this.speed = 4;
     this.angle = angle;
     this.width = 20;
     this.height = 5;
   }
 
   runLogic() {
-    // needs to be sorted, can't find the logic
     this.x += 4;
   }
 
