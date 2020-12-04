@@ -14,12 +14,16 @@ const screenStartElement = document.getElementById('screen-start');
 const screenGameOverElement = document.getElementById('screen-game-over');
 const screenPlayElement = document.getElementById('screen-play');
 
+// START THE GAME
+
 triggerPlayElement.addEventListener('click', () => {
   screenStartElement.style.display = 'none';
   screenPlayElement.style.display = 'initial';
   
   game.loop();
 });
+
+// GAME LOST:
 
 triggerPlayAgainElement.addEventListener('click', () => {
   screenGameOverElement.style.display = 'none';

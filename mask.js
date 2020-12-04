@@ -1,3 +1,6 @@
+const maskImage = new Image();
+maskImage.src = 'images/mask.png';
+
 class Mask {
   constructor(x, y, directionX, directionY, angle) {
     this.x = x;
@@ -5,8 +8,8 @@ class Mask {
     this.speedX = directionX;
     this.speedY = directionY;
     this.angle = angle;
-    this.width = 20;
-    this.height = 5;
+    this.width = 30;
+    this.height = 20;
   }
 
   runLogic() {
@@ -19,9 +22,11 @@ class Mask {
     context.save();
     context.translate(this.x + this.width / 2, this.y + this.height / 2);
     context.rotate(this.angle);
-    context.fillRect(
-      -0.5 * this.width,
-      -0.5 * this.height,
+    context.translate(- (this.x + this.width / 2), - (this.y + this.height / 2));
+    context.drawImage(
+      maskImage,
+      this.x,
+      this.y,
       this.width,
       this.height
     );

@@ -1,31 +1,35 @@
 class Game {
   constructor() {
-    this.player = new Player(canvasWidth / 2, canvasHeight / 2 - 25, 50, 50);
+    this.player = new Player(100, canvasHeight / 2 - 25, 70, 70);
     this.unmaskedPersons = [];
     this.maskedPersons = [];
+    this.freshlyMaskedPersons = [];
     this.kids = [];
     this.masks = [];
     this.lastUnmaskedPersonTimestamp = 0;
     this.lastMaskedPersonTimestamp = 0;
     this.lastKidTimestamp = 0;
-    this.score = 10000;
+    this.score = 100;
     this.setKeyBindings();
     this.active = true;
   }
 
   reset() {
-    this.player = new Player(canvasWidth / 2, canvasHeight / 2 - 25, 50, 50);
+    this.player = new Player(100, canvasHeight / 2 - 25, 70, 70);
     this.unmaskedPersons = [];
     this.maskedPersons = [];
+    this.freshlyMaskedPersons = [];
     this.kids = [];
     this.masks = [];
     this.lastUnmaskedPersonTimestamp = 0;
     this.lastMaskedPersonTimestamp = 0;
     this.lastKidTimestamp = 0;
-    this.score = 10000;
+    this.score = 100;
     this.setKeyBindings();
     this.active = true;
   }
+
+  //////// CONTROL WITH KEYBOARD AND MOUSE ////////
 
   setKeyBindings() {
     window.addEventListener('keydown', (event) => {
@@ -55,7 +59,7 @@ class Game {
     });
     canvasElement.addEventListener('mousedown', (event) => {
       let playerX = this.player.x + this.player.width / 2;
-      let playerY = this.player.y + this.player.height / 2 - 2.5;
+      let playerY = this.player.y + this.player.height / 2 - 10;
       let vectorX = event.offsetX - playerX;
       let vectorY = event.offsetY - playerY;
       let length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
@@ -69,9 +73,11 @@ class Game {
         this.player.angle
       );
       this.masks.push(mask);
-      console.log(mask);
+      console.log(this.masks.lenght);
     });
   }
+
+  //////// CREATING PEOPLE IN THE GAME ////////
 
   addDifferentPeople() {
     let currentTimeStamp = Date.now();
@@ -79,12 +85,12 @@ class Game {
       this.unmaskedPersons.push(
         new UnmaskedPerson(
           canvasWidth,
-          Math.random() * (canvasHeight - 50),
-          50,
-          50,
+          Math.random() * (canvasHeight - 70),
+          70,
+          70,
           -1,
           0,
-          'red'
+          unmaskedPersonImage
         )
       );
       this.lastUnmaskedPersonTimestamp = currentTimeStamp;
@@ -93,52 +99,26 @@ class Game {
       this.maskedPersons.push(
         new MaskedPerson(
           canvasWidth,
-          Math.random() * (canvasHeight - 50),
-          50,
-          50,
+          Math.random() * (canvasHeight - 70),
+          70,
+          70,
           -1,
-          0,
-          'green'
+          0
         )
       );
       this.lastMaskedPersonTimestamp = currentTimeStamp;
     }
     if (currentTimeStamp > this.lastKidTimestamp + 1500) {
       this.kids.push(
-        new Kid(
-          canvasWidth,
-          Math.random() * (canvasHeight - 20),
-          20,
-          20,
-          -1,
-          0,
-          '#DEE41F'
-        )
+        new Kid(canvasWidth, Math.random() * (canvasHeight - 40), 40, 40, -1, 0)
       );
       this.lastKidTimestamp = currentTimeStamp;
     }
   }
 
-  throwMask() {
-    canvasElement.addEventListener('mousedown', (event) => {
-      let playerX = this.player.x + this.player.width / 2;
-      let playerY = this.player.y + this.player.height / 2 - 2.5;
-      let vectorX = event.offsetX - playerX;
-      let vectorY = event.offsetY - playerY;
-      let length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
-      let directionX = vectorX / length;
-      let directionY = vectorY / length;
-      const mask = new Mask(
-        playerX,
-        playerY,
-        directionX,
-        directionY,
-        this.player.angle
-      );
-      this.masks.push(mask);
-    });
-  }
+  //////// CHECKING FOR COLLISION BETWEEN MASK AND DIFFERENT PEOPLE ////////
 
+  // People not wearing masks
   checkIntersectionOfMaskAndUnmaskedPersons() {
     for (let mask of this.masks) {
       for (let unmaskedPerson of this.unmaskedPersons) {
@@ -153,12 +133,16 @@ class Game {
           );
           const indexOfMask = this.masks.indexOf(mask);
           this.score += 20;
-          this.unmaskedPersons[indexOfUnmaskedPerson].color = 'blue';
+          this.unmaskedPersons[
+            indexOfUnmaskedPerson
+          ].image = freshlyMaskedPersonImage;
           this.masks.splice(indexOfMask, 1);
         }
       }
     }
   }
+
+  // People wearing masks already
 
   checkIntersectionOfMaskAndMaskedPersons() {
     for (let mask of this.masks) {
@@ -176,6 +160,8 @@ class Game {
     }
   }
 
+  // Kids who do not need to wear masks
+
   checkIntersectionOfMaskAndKids() {
     for (let mask of this.masks) {
       for (let kid of this.kids) {
@@ -192,6 +178,11 @@ class Game {
     }
   }
 
+  /*
+  //////// CHECKING FOR COLLISION BETWEEN PLAYER AND DIFFERENT PEOPLE ////////
+
+  // Masked People - score decreases by 10, speed change
+
   checkIntersectionOfPlayerAndMaskedPersons() {
     for (let maskedPerson of this.maskedPersons) {
       const indexOfMaskedPerson = this.maskedPersons.indexOf(maskedPerson);
@@ -201,11 +192,13 @@ class Game {
         this.player.y >= maskedPerson.y &&
         this.player.y <= maskedPerson.y + maskedPerson.height
       ) {
-        // this.score -= 10;
+        this.score -= 10;
         this.maskedPersons.splice(indexOfMaskedPerson, 1);
       }
     }
   }
+
+  // Unmasked People - score decreases by 20
 
   checkIntersectionOfPlayerAndUnmaskedPersons() {
     for (let unmaskedPerson of this.unmaskedPersons) {
@@ -218,11 +211,13 @@ class Game {
         this.player.y >= unmaskedPerson.y &&
         this.player.y <= unmaskedPerson.y + unmaskedPerson.height
       ) {
-        // this.score -= 10;
+        this.score -= 20;
         this.unmaskedPersons.splice(indexOfUnmaskedPerson, 1);
       }
     }
   }
+
+  // Kids - score decreases by 10
 
   checkIntersectionOfPlayerAndKids() {
     for (let kid of this.kids) {
@@ -238,6 +233,9 @@ class Game {
       }
     }
   }
+  */
+
+  //////// CLEANING UP IF ELEMENTS ARE LEAVING CANVAS ////////
 
   collectGarbage() {
     for (let mask of this.masks) {
@@ -248,7 +246,6 @@ class Game {
         mask.y <= 0
       ) {
         let indexOfMask = this.masks.indexOf(mask);
-        //console.log(indexOfMask);
         this.masks.splice(indexOfMask, 1);
       }
     }
@@ -289,6 +286,32 @@ class Game {
     }
   }
 
+  //////// GAME ENDING LOGICs ////////
+
+  GameEndingLogic() {
+    if (this.score <= 0) {
+      this.active = false;
+    }
+  }
+
+  unmaskedPersonLeavingPlayground() {
+    for (let unmaskedPerson of this.unmaskedPersons) {
+      const indexOfUnmaskedPerson2 = this.unmaskedPersons.indexOf(
+        unmaskedPerson
+      );
+      if (
+        (this.unmaskedPersons[indexOfUnmaskedPerson2].image ===
+          unmaskedPersonImage &&
+          unmaskedPerson.x + unmaskedPerson.width === 0) ||
+        unmaskedPerson.x >= canvasWidth
+      ) {
+        this.active = false;
+      }
+    }
+  }
+
+  //////// LOOP FOR THE GAME ITSELF ////////
+
   loop() {
     this.runLogic();
     this.draw();
@@ -301,6 +324,8 @@ class Game {
       screenGameOverElement.style.display = 'initial';
     }
   }
+
+  //////// RUNLOGIC FOR GAME ELEMENTS ////////
 
   runLogic() {
     this.collectGarbage();
@@ -317,23 +342,25 @@ class Game {
     for (let mask of this.masks) {
       mask.runLogic();
     }
-
     this.checkIntersectionOfMaskAndUnmaskedPersons();
     this.checkIntersectionOfMaskAndMaskedPersons();
     this.checkIntersectionOfMaskAndKids();
-    this.checkIntersectionOfPlayerAndMaskedPersons();
+    /*  this.checkIntersectionOfPlayerAndMaskedPersons();
     this.checkIntersectionOfPlayerAndUnmaskedPersons();
-    this.checkIntersectionOfPlayerAndKids();
-    // if (this.score <= 0) {
-    // this.active = false;
-    // }
+    this.checkIntersectionOfPlayerAndKids();*/
+    this.unmaskedPersonLeavingPlayground();
+    this.GameEndingLogic();
   }
 
+  //////// DRAWING A SCORE ////////
+
   drawScore() {
-    context.fillStyle = 'grey';
-    context.font = '64px sans-serif';
-    context.fillText(this.score, 50, 100);
+    context.fillStyle = 'white';
+    context.font = '30px sans-serif';
+    context.fillText(this.score, 50, 70);
   }
+
+  //////// DRAWING ALL GAME ELEMENTS ////////
 
   draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);

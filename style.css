@@ -1,12 +1,74 @@
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
 body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  canvas {
-    background-color: #90D0F9;
-    border: 2px solid black;
-  }
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  background-color: #7b7b71;
+  border: 2px solid black;
+}
+
+#screen-play,
+#screen-game-over {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#screen-start {
+  background-image: url('images/BackgroundPicture.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+  width: 800px;
+}
+
+h1,
+h2 {
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+#trigger-play {
+  font-size: 1.5rem;
+  width: 100px;
+  height: 50px;
+  border-radius: 13px;
+  margin-top: 50px;
+}
+
+#virus-image {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+#mask-image {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+}

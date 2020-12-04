@@ -1,12 +1,14 @@
+const maskedPersonImage = new Image();
+maskedPersonImage.src = 'images/Male.png';
+
 class MaskedPerson {
-  constructor(x, y, width, height, speedX, speedY, color) {
+  constructor(x, y, width, height, speedX, speedY) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.speedX = speedX;
     this.speedY = speedY;
-    this.color = color;
   }
 
   runLogic() {
@@ -15,7 +17,16 @@ class MaskedPerson {
   }
 
   draw() {
-    context.fillStyle = this.color;
-    context.fillRect(this.x, this.y, this.width, this.height);
+    context.drawImage(
+      maskedPersonImage,
+      240,
+      120,
+      90,
+      120,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
   }
 }
