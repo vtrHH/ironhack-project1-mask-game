@@ -1,6 +1,6 @@
 class Game {
   constructor() {
-    this.player = new Player(50, canvasHeight / 2 - 25, 50, 50);
+    this.player = new Player(canvasWidth / 2, canvasHeight / 2 - 25, 50, 50);
     this.unmaskedPersons = [];
     this.maskedPersons = [];
     this.kids = [];
@@ -20,8 +20,8 @@ class Game {
     this.kids = [];
     this.masks = [];
     this.lastUnmaskedPersonTimestamp = 0;
-    this.lastMaskedPersonTimestamp = 2;
-    this.lastKidTimestamp = 3;
+    this.lastMaskedPersonTimestamp = 0;
+    this.lastKidTimestamp = 0;
     this.score = 10000;
     this.setKeyBindings();
     this.active = true;
@@ -36,6 +36,12 @@ class Game {
         case 'ArrowDown':
           this.player.y += 10;
           break;
+        case 'ArrowLeft':
+          this.player.x -= 10;
+          break;
+        case 'ArrowRight':
+          this.player.x += 10;
+          break;
       }
       // x is working funny (I think due to rotation)
       this.player.x = Math.max(
@@ -47,10 +53,28 @@ class Game {
         0
       );
     });
+    canvasElement.addEventListener('mousedown', (event) => {
+      let playerX = this.player.x + this.player.width / 2;
+      let playerY = this.player.y + this.player.height / 2 - 2.5;
+      let vectorX = event.offsetX - playerX;
+      let vectorY = event.offsetY - playerY;
+      let length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+      let directionX = vectorX / length;
+      let directionY = vectorY / length;
+      let mask = new Mask(
+        playerX,
+        playerY,
+        directionX,
+        directionY,
+        this.player.angle
+      );
+      this.masks.push(mask);
+      console.log(mask);
+    });
   }
 
   addDifferentPeople() {
-    const currentTimeStamp = Date.now();
+    let currentTimeStamp = Date.now();
     if (currentTimeStamp > this.lastUnmaskedPersonTimestamp + 2500) {
       this.unmaskedPersons.push(
         new UnmaskedPerson(
@@ -79,16 +103,16 @@ class Game {
       );
       this.lastMaskedPersonTimestamp = currentTimeStamp;
     }
-    if (currentTimeStamp > this.lastKidTimestamp + 5000) {
+    if (currentTimeStamp > this.lastKidTimestamp + 1500) {
       this.kids.push(
         new Kid(
           canvasWidth,
           Math.random() * (canvasHeight - 20),
-          0,
           20,
           20,
+          -1,
           0,
-          1
+          '#DEE41F'
         )
       );
       this.lastKidTimestamp = currentTimeStamp;
@@ -96,9 +120,9 @@ class Game {
   }
 
   throwMask() {
-    let playerX = this.player.x + this.player.width / 2;
-    let playerY = this.player.y + this.player.height / 2 - 2.5;
     canvasElement.addEventListener('mousedown', (event) => {
+      let playerX = this.player.x + this.player.width / 2;
+      let playerY = this.player.y + this.player.height / 2 - 2.5;
       let vectorX = event.offsetX - playerX;
       let vectorY = event.offsetY - playerY;
       let length = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
@@ -120,6 +144,7 @@ class Game {
       for (let unmaskedPerson of this.unmaskedPersons) {
         if (
           mask.x >= unmaskedPerson.x - mask.width &&
+          mask.x <= unmaskedPerson.x + unmaskedPerson.width &&
           mask.y >= unmaskedPerson.y &&
           mask.y <= unmaskedPerson.y + unmaskedPerson.height
         ) {
@@ -140,6 +165,7 @@ class Game {
       for (let maskedPerson of this.maskedPersons) {
         if (
           mask.x >= maskedPerson.x - mask.width &&
+          mask.x <= maskedPerson.x + maskedPerson.width &&
           mask.y >= maskedPerson.y &&
           mask.y <= maskedPerson.y + maskedPerson.height
         ) {
@@ -152,15 +178,63 @@ class Game {
 
   checkIntersectionOfMaskAndKids() {
     for (let mask of this.masks) {
-      for (let maskedPerson of this.maskedPersons) {
+      for (let kid of this.kids) {
         if (
-          mask.x >= maskedPerson.x - mask.width &&
-          mask.y >= maskedPerson.y &&
-          mask.y <= maskedPerson.y + maskedPerson.height
+          mask.x >= kid.x - kid.width &&
+          mask.x <= kid.x + kid.width &&
+          mask.y >= kid.y &&
+          mask.y <= kid.y + kid.height
         ) {
           const indexOfMask = this.masks.indexOf(mask);
           this.masks.splice(indexOfMask, 1);
         }
+      }
+    }
+  }
+
+  checkIntersectionOfPlayerAndMaskedPersons() {
+    for (let maskedPerson of this.maskedPersons) {
+      const indexOfMaskedPerson = this.maskedPersons.indexOf(maskedPerson);
+      if (
+        this.player.x >= maskedPerson.x - this.player.width &&
+        this.player.x <= maskedPerson.x + maskedPerson.width &&
+        this.player.y >= maskedPerson.y &&
+        this.player.y <= maskedPerson.y + maskedPerson.height
+      ) {
+        // this.score -= 10;
+        this.maskedPersons.splice(indexOfMaskedPerson, 1);
+      }
+    }
+  }
+
+  checkIntersectionOfPlayerAndUnmaskedPersons() {
+    for (let unmaskedPerson of this.unmaskedPersons) {
+      const indexOfUnmaskedPerson = this.unmaskedPersons.indexOf(
+        unmaskedPerson
+      );
+      if (
+        this.player.x >= unmaskedPerson.x - this.player.width &&
+        this.player.x <= unmaskedPerson.x + unmaskedPerson.width &&
+        this.player.y >= unmaskedPerson.y &&
+        this.player.y <= unmaskedPerson.y + unmaskedPerson.height
+      ) {
+        // this.score -= 10;
+        this.unmaskedPersons.splice(indexOfUnmaskedPerson, 1);
+      }
+    }
+  }
+
+  checkIntersectionOfPlayerAndKids() {
+    for (let kid of this.kids) {
+      const indexOfKid = this.kids.indexOf(kid);
+      if (
+        this.player.x >= kid.x - this.player.width &&
+        this.player.x <= kid.x + kid.width &&
+        this.player.y >= kid.y &&
+        this.player.y <= kid.y + kid.height
+      ) {
+        this.score -= 10;
+        this.kids.splice(indexOfKid, 1);
       }
     }
   }
@@ -173,7 +247,8 @@ class Game {
         mask.y >= canvasHeight ||
         mask.y <= 0
       ) {
-        const indexOfMask = this.masks.indexOf(mask);
+        let indexOfMask = this.masks.indexOf(mask);
+        //console.log(indexOfMask);
         this.masks.splice(indexOfMask, 1);
       }
     }
@@ -184,7 +259,7 @@ class Game {
         unmaskedPerson.y >= canvasHeight ||
         unmaskedPerson.y <= 0
       ) {
-        const indexOfUnmaskedPerson = this.unmaskedPersons.indexOf(
+        let indexOfUnmaskedPerson = this.unmaskedPersons.indexOf(
           unmaskedPerson
         );
         this.masks.splice(indexOfUnmaskedPerson, 1);
@@ -197,7 +272,7 @@ class Game {
         maskedPerson.y >= canvasHeight ||
         maskedPerson.y <= 0
       ) {
-        const indexOfMaskedPerson = this.maskedPersons.indexOf(maskedPerson);
+        let indexOfMaskedPerson = this.maskedPersons.indexOf(maskedPerson);
         this.masks.splice(indexOfMaskedPerson, 1);
       }
     }
@@ -208,7 +283,7 @@ class Game {
         kid.y >= canvasHeight ||
         kid.y <= 0
       ) {
-        const indexOfKid = this.kids.indexOf(kid);
+        let indexOfKid = this.kids.indexOf(kid);
         this.kids.splice(indexOfKid, 1);
       }
     }
@@ -239,7 +314,6 @@ class Game {
     for (let kid of this.kids) {
       kid.runLogic();
     }
-    this.throwMask();
     for (let mask of this.masks) {
       mask.runLogic();
     }
@@ -247,9 +321,12 @@ class Game {
     this.checkIntersectionOfMaskAndUnmaskedPersons();
     this.checkIntersectionOfMaskAndMaskedPersons();
     this.checkIntersectionOfMaskAndKids();
-    if (this.score <= 0) {
-      this.active = false;
-    }
+    this.checkIntersectionOfPlayerAndMaskedPersons();
+    this.checkIntersectionOfPlayerAndUnmaskedPersons();
+    this.checkIntersectionOfPlayerAndKids();
+    // if (this.score <= 0) {
+    // this.active = false;
+    // }
   }
 
   drawScore() {

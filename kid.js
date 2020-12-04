@@ -1,11 +1,12 @@
 class Kid {
-  constructor(x, y, width, height, speedX, speedY) {
+  constructor(x, y, width, height, speedX, speedY, color) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.speedX = speedX;
     this.speedY = speedY;
+    this.color = color;
   }
 
   runLogic() {
@@ -14,7 +15,7 @@ class Kid {
   }
 
   draw() {
-    context.fillStyle = '#DEE41F';
+    context.fillStyle = this.color;
     context.fillRect(this.x, this.y, this.width, this.height);
   }
 }

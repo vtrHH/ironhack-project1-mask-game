@@ -17,7 +17,7 @@ class Mask {
   draw() {
     context.fillStyle = 'white';
     context.save();
-    context.translate(this.x, this.y + this.height / 2);
+    context.translate(this.x + this.width / 2, this.y + this.height / 2);
     context.rotate(this.angle);
     context.fillRect(
       -0.5 * this.width,
