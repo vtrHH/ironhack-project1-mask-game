@@ -17,7 +17,7 @@ const screenPlayElement = document.getElementById('screen-play');
 triggerPlayElement.addEventListener('click', () => {
   screenStartElement.style.display = 'none';
   screenPlayElement.style.display = 'initial';
-
+  
   game.loop();
 });
 

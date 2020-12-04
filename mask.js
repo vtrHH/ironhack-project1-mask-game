@@ -1,16 +1,15 @@
 class Mask {
-  constructor(x, y, distanceX, distanceY, angle) {
+  constructor(x, y, directionX, directionY, angle) {
     this.x = x;
     this.y = y;
-    this.speedX = distanceX;
-    this.speedY = distanceY;
+    this.speedX = directionX;
+    this.speedY = directionY;
     this.angle = angle;
     this.width = 20;
     this.height = 5;
   }
 
   runLogic() {
-    // completely lost here - needs to be fixed
     this.x += this.speedX * 10;
     this.y += this.speedY * 10;
   }
@@ -29,19 +28,3 @@ class Mask {
     context.restore();
   }
 }
-
-/* context.clearRect(0, 0, canvasWidth, canvasHeight);
-      context.fillStyle = 'black';
-      context.save();
-      context.translate(this.x, this.y + this.height / 2);
-      context.rotate(this.angle);
-      context.fillRect(
-        -0.5 * this.width,
-        -0.5 * this.height,
-        this.width,
-        this.height
-      );
-      context.restore();
-    }
-  }
-  */
