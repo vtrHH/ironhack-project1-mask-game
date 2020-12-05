@@ -1,6 +1,13 @@
+const hitSound = new Audio(
+  'http://freesoundeffect.net/sites/default/files/human-voiceclip-860-sound-effect-97180176.mp3'
+);
+const maskFallingDown = new Audio('sounds/MaskFallingDown.wav');
+const gameMusic = new Audio('sounds/Story of Maple_mp3.mp3');
+const gameOver = new Audio('sounds/GameOver.wav');
+
 class Game {
   constructor() {
-    this.player = new Player(100, canvasHeight / 2 - 25, 70, 70);
+    this.player = new Player(100, 300, 70, 70);
     this.unmaskedPersons = [];
     this.maskedPersons = [];
     this.freshlyMaskedPersons = [];
@@ -15,7 +22,7 @@ class Game {
   }
 
   reset() {
-    this.player = new Player(100, canvasHeight / 2 - 25, 70, 70);
+    this.player = new Player(100, 300, 70, 70);
     this.unmaskedPersons = [];
     this.maskedPersons = [];
     this.freshlyMaskedPersons = [];
@@ -81,11 +88,11 @@ class Game {
 
   addDifferentPeople() {
     let currentTimeStamp = Date.now();
-    if (currentTimeStamp > this.lastUnmaskedPersonTimestamp + 2500) {
+    if (currentTimeStamp > this.lastUnmaskedPersonTimestamp + 5500) {
       this.unmaskedPersons.push(
         new UnmaskedPerson(
           canvasWidth,
-          Math.random() * (canvasHeight - 70),
+          Math.random() * (330 - 200) + 200,
           70,
           70,
           -1,
@@ -95,11 +102,11 @@ class Game {
       );
       this.lastUnmaskedPersonTimestamp = currentTimeStamp;
     }
-    if (currentTimeStamp > this.lastMaskedPersonTimestamp + 3500) {
+    if (currentTimeStamp > this.lastMaskedPersonTimestamp + 5000) {
       this.maskedPersons.push(
         new MaskedPerson(
           canvasWidth,
-          Math.random() * (canvasHeight - 70),
+          Math.random() * (320 - 200) + 200,
           70,
           70,
           -1,
@@ -108,9 +115,9 @@ class Game {
       );
       this.lastMaskedPersonTimestamp = currentTimeStamp;
     }
-    if (currentTimeStamp > this.lastKidTimestamp + 1500) {
+    if (currentTimeStamp > this.lastKidTimestamp + 3000) {
       this.kids.push(
-        new Kid(canvasWidth, Math.random() * (canvasHeight - 40), 40, 40, -1, 0)
+        new Kid(canvasWidth, Math.random() * (360 - 200) + 200, 40, 40, -1, 0)
       );
       this.lastKidTimestamp = currentTimeStamp;
     }
@@ -137,6 +144,7 @@ class Game {
             indexOfUnmaskedPerson
           ].image = freshlyMaskedPersonImage;
           this.masks.splice(indexOfMask, 1);
+          hitSound.play();
         }
       }
     }
@@ -155,6 +163,7 @@ class Game {
         ) {
           const indexOfMask = this.masks.indexOf(mask);
           this.masks.splice(indexOfMask, 1);
+          maskFallingDown.play();
         }
       }
     }
@@ -173,6 +182,7 @@ class Game {
         ) {
           const indexOfMask = this.masks.indexOf(mask);
           this.masks.splice(indexOfMask, 1);
+          maskFallingDown.play();
         }
       }
     }
@@ -318,10 +328,13 @@ class Game {
     if (this.active) {
       window.requestAnimationFrame(() => {
         this.loop();
+        gameMusic.play();
       });
     } else {
       screenPlayElement.style.display = 'none';
       screenGameOverElement.style.display = 'initial';
+      gameMusic.pause();
+      gameOver.play();
     }
   }
 

@@ -26,16 +26,18 @@ class Player {
     context.rotate(this.angle);
     context.translate(-(this.x + this.width / 2), -(this.y + this.height / 2));
     context.drawImage(
-      playerImage,
-      80,
-      240,
-      90,
-      120,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
-    context.restore();
+            playerImage,
+            0,
+            240,
+            90,
+            120,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+          );
+          context.restore();
+          console.log(this.angle);
   } 
 }
+

@@ -12,20 +12,20 @@ body {
 }
 
 canvas {
-  background-color: #7b7b71;
+  background-image: url('images/Village_Background.jpg');
+  background-size: cover;
   border: 2px solid black;
 }
 
-#screen-play,
-#screen-game-over {
+#screen-play {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
 }
 
 #screen-start {
-  background-image: url('images/BackgroundPicture.jpg');
+  background-image: url('images/Village_Background.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -33,8 +33,37 @@ canvas {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 500px;
+  height: 400px;
   width: 800px;
+}
+
+#screen-game-over {
+  background-image: url('images/Village_Background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  width: 800px;
+}
+
+#gameOverPic {
+  width: 300px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+#trigger-play-again {
+  font-size: 1rem;
+  font-weight: 600;
+  width: 100px;
+  height: 50px;
+  border-radius: 13px;
+  margin: 20px;
 }
 
 h1,
@@ -56,14 +85,7 @@ h1 {
   width: 100px;
   height: 50px;
   border-radius: 13px;
-  margin-top: 50px;
-}
-
-#virus-image {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  flex-direction: column;
+  margin: 50px;
 }
 
 #mask-image {
@@ -71,4 +93,5 @@ h1 {
   height: 100px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
