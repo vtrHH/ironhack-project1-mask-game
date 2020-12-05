@@ -326,6 +326,7 @@ class Game {
   gameEndingLogic() {
     if (this.score <= 0) {
       this.active = false;
+      gameMusic.pause();
     }
   }
 
@@ -341,6 +342,7 @@ class Game {
         unmaskedPerson.x >= canvasWidth
       ) {
         this.active = false;
+        gameMusic.pause();
       }
     }
   }
