@@ -18,7 +18,6 @@ class Mask {
   }
 
   draw() {
-    context.fillStyle = 'white';
     context.save();
     context.translate(this.x + this.width / 2, this.y + this.height / 2);
     context.rotate(this.angle);
@@ -31,5 +30,5 @@ class Mask {
       this.height
     );
     context.restore();
-  }
+    }
 }

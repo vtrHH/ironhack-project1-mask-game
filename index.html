@@ -3,20 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>repl.it</title>
+    <title>Mask Game</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+
     <!-- START SCREEN -->
     <section id="screen-start">
-     
-      </div>
       <div><button id="trigger-play">Play</button></div>
     </section>
 
     <!-- GAME OVER SCREEN -->
     <section id="screen-game-over" style="display: none">
-      <div></div><img src="images/GameOver.png" alt="GameOver" id="gameOverPic"></div>
+      <div><img src="images/GameOver.png" alt="GameOver" id="gameOverPic"></div>
      <div><button id="trigger-play-again">Try again</button></div>
     </section>
 
@@ -33,7 +32,11 @@
     <script src="game.js"></script>
     <script src="script.js"></script>
 
-   <!-- HIGHSCORE SCREEN -->
+   <!-- SCORE SCREEN -->
+   <section id="screen-win" style="display: none">
+    <div></div><img src="images/wellDone.png" alt="WellDone" id="WellDonePic"></div>
+   <div><button id="trigger-play-again">Try again</button></div>
+  </section>
 
   </body>
 </html>

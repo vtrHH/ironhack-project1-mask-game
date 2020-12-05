@@ -1,9 +1,9 @@
 * {
-  box-sizing: border-box;
   font-family: sans-serif;
 }
 
 body {
+  display: flex;
   margin: 0;
   height: 100vh;
   display: flex;
@@ -21,7 +21,7 @@ canvas {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex;
 }
 
 #screen-start {
@@ -88,10 +88,3 @@ h1 {
   margin: 50px;
 }
 
-#mask-image {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}

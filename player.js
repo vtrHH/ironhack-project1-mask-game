@@ -21,23 +21,24 @@ class Player {
 
   draw() {
     context.clearRect(0, 0, canvasWidth, canvasHeight);
-    context.save();
+
+    // ROTATION OF PLAYER: Took out for this iteration
+
+  /*  context.save();
     context.translate(this.x + this.width / 2, this.y + this.height / 2);
     context.rotate(this.angle);
-    context.translate(-(this.x + this.width / 2), -(this.y + this.height / 2));
+    context.translate(-(this.x + this.width / 2), -(this.y + this.height / 2)); */
     context.drawImage(
-            playerImage,
-            0,
-            240,
-            90,
-            120,
-            this.x,
-            this.y,
-            this.width,
-            this.height
-          );
-          context.restore();
-          console.log(this.angle);
+      playerImage,
+      0,
+      240,
+      90,
+      120,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+        //  context.restore();
   } 
 }
-
