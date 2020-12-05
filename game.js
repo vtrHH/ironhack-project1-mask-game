@@ -152,10 +152,10 @@ class Game {
             maskFallingDown.play();
           } else {
             this.score += 20;
+            hitSound.play();
             this.unmaskedPersons[
               indexOfUnmaskedPerson
             ].image = freshlyMaskedPersonImage;
-            hitSound.play();
           }
           this.masks.splice(indexOfMask, 1);
         }
